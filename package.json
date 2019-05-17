@@ -1,0 +1,26 @@
+{
+  "name": "node-nan-tutorial-from-medium",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bindings.js",
+  "scripts": {
+    "build": "node-gyp build",
+    "install": "node-gyp rebuild",
+    "start": "node ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kjonathante/node-nan-tutorial-from-medium.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/kjonathante/node-nan-tutorial-from-medium/issues"
+  },
+  "homepage": "https://github.com/kjonathante/node-nan-tutorial-from-medium#readme",
+  "dependencies": {
+    "nan": "2.14.0"
+  }
+}
