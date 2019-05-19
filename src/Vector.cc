@@ -3,7 +3,6 @@
 Nan::Persistent<v8::FunctionTemplate> Vector::constructor;
 
 NAN_MODULE_INIT(Vector::Init) {
-  /* original code */
   v8::Local<v8::FunctionTemplate> ctor = Nan::New<v8::FunctionTemplate>(Vector::New);
   constructor.Reset(ctor);
   ctor->InstanceTemplate()->SetInternalFieldCount(1);
@@ -17,16 +16,10 @@ NAN_MODULE_INIT(Vector::Init) {
   Nan::SetPrototypeMethod(ctor, "add", Add);
 
   //target->Set(Nan::New("Vector").ToLocalChecked(), ctor->GetFunction());
-  /* -- original code */
-
   Nan::Set(target, Nan::New("Vector").ToLocalChecked(), Nan::GetFunction(ctor).ToLocalChecked());
 }
 
 NAN_METHOD(Vector::New) {
-  v8::Isolate* isolate = info.GetIsolate();
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-
-  /* original code */
   // throw an error if constructor is called without new keyword
   if(!info.IsConstructCall()) {
     return Nan::ThrowError(Nan::New("Vector::New - called without new keyword").ToLocalChecked());
@@ -50,16 +43,12 @@ NAN_METHOD(Vector::New) {
   // vec->x = info[0]->NumberValue();
   // vec->y = info[1]->NumberValue();
   // vec->z = info[2]->NumberValue();
-  /* -- original code */
+  vec->x = Nan::To<double>(info[0]).FromMaybe(0);
+  vec->x = Nan::To<double>(info[1]).FromMaybe(0);
+  vec->x = Nan::To<double>(info[2]).FromMaybe(0);
 
-  vec->x = info[0]->NumberValue(context).FromMaybe(0);
-  vec->y = info[1]->NumberValue(context).FromMaybe(0);
-  vec->z = info[2]->NumberValue(context).FromMaybe(0);
-
-  /* original code */
   // return the wrapped javascript instance
   info.GetReturnValue().Set(info.Holder());
-  /* -- original code */
 }
 
 NAN_GETTER(Vector::HandleGetters) {
@@ -78,40 +67,26 @@ NAN_GETTER(Vector::HandleGetters) {
 }
 
 NAN_SETTER(Vector::HandleSetters) {
-  v8::Isolate* isolate = info.GetIsolate();
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-
-  /* original code */
   Vector* self = Nan::ObjectWrap::Unwrap<Vector>(info.This());
 
   if(!value->IsNumber()) {
     return Nan::ThrowError(Nan::New("expected value to be a number").ToLocalChecked());
   }
-
-  std::string propertyName = std::string(*Nan::Utf8String(property));
   
-  // if (propertyName == "x") {
-  //   self->x = value->NumberValue();
-  // } else if (propertyName == "y") {
-  //   self->y = value->NumberValue();
-  // } else if (propertyName == "z") {
-  //   self->z = value->NumberValue();
-  // }
-  /* -- original code */
-
+  std::string propertyName = std::string(*Nan::Utf8String(property));
   if (propertyName == "x") {
-    self->x = value->NumberValue(context).FromMaybe(0);
+    // self->x = value->NumberValue();
+    self->x = Nan::To<double>(value).FromMaybe(0);
   } else if (propertyName == "y") {
-    self->y = value->NumberValue(context).FromMaybe(0);
+    // self->y = value->NumberValue();
+    self->y = Nan::To<double>(value).FromMaybe(0);
   } else if (propertyName == "z") {
-    self->z = value->NumberValue(context).FromMaybe(0);
+    // self->z = value->NumberValue();
+    self->z = Nan::To<double>(value).FromMaybe(0);
   }
 }
 
 NAN_METHOD(Vector::Add) {
-  v8::Isolate* isolate = info.GetIsolate();
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  
   // unwrap this Vector
   Vector * self = Nan::ObjectWrap::Unwrap<Vector>(info.This());
 
@@ -119,10 +94,8 @@ NAN_METHOD(Vector::Add) {
     return Nan::ThrowError(Nan::New("Vector::Add - expected argument to be instance of Vector").ToLocalChecked());
   }
   // unwrap the Vector passed as argument
-  /* original code
-  Vector * otherVec = Nan::ObjectWrap::Unwrap<Vector>(info[0]->ToObject());
-  */
-  Vector * otherVec = Nan::ObjectWrap::Unwrap<Vector>(info[0]->ToObject(context).ToLocalChecked());
+  // Vector * otherVec = Nan::ObjectWrap::Unwrap<Vector>(info[0]->ToObject());
+  Vector * otherVec = Nan::ObjectWrap::Unwrap<Vector>(Nan::To<v8::Object>(info[0]).ToLocalChecked());
 
   // specify argument counts and constructor arguments
   const int argc = 3;
@@ -133,10 +106,8 @@ NAN_METHOD(Vector::Add) {
   };
 
   // get a local handle to our constructor function
-  /* original code
-  v8::Local<v8::Function> constructorFunc = Nan::New(Vector::constructor)->GetFunction();
-  */
-  v8::Local<v8::Function> constructorFunc = Nan::New(Vector::constructor)->GetFunction(context).ToLocalChecked();
+  // v8::Local<v8::Function> constructorFunc = Nan::New(Vector::constructor)->GetFunction();
+  v8::Local<v8::Function> constructorFunc = Nan::GetFunction( Nan::New( Vector::constructor ) ).ToLocalChecked();
   // create a new JS instance from arguments
   v8::Local<v8::Object> jsSumVec = Nan::NewInstance(constructorFunc, argc, argv).ToLocalChecked();
 
